@@ -2,9 +2,16 @@ package com.duelistic;
 
 import java.util.*;
 
+/**
+ * RankedAPI used to handle a both elo- and rank-name- system
+ */
 public class RankedAPI {
     private NavigableSet<Rank> ranks;
 
+    /**
+     * Constructs the api
+     * @param ranks
+     */
     public RankedAPI(Rank... ranks) {
         this.ranks = new TreeSet<>(Comparator.comparingInt(Rank::getMinElo));
         for (Rank rank : ranks) {
@@ -13,9 +20,14 @@ public class RankedAPI {
         }
     }
 
+    /**
+     * Loops through the ranks set to find a rank in the specified elo
+     * @param elo
+     * @return Rank of the set ranks that includes the parametric elo
+     */
     public Rank getRankForElo(int elo) {
         Rank rank = ranks.floor(probeForElo(elo));
-        if (rank != null && elo <= rank.getMaxElo()) {
+        if (rank != null && (rank.getMaxElo() == -1 || elo <= rank.getMaxElo())) {
             return rank;
         }
         return null;
@@ -25,6 +37,10 @@ public class RankedAPI {
         return new Rank(null, elo, elo);
     }
 
+    /**
+     * Returns the specified ranks
+     * @return unmodifiable ranks
+     */
     public Set<Rank> getRanks() {
         return Collections.unmodifiableSet(ranks);
     }
